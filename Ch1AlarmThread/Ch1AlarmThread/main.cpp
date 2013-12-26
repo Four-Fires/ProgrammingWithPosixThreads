@@ -1,0 +1,67 @@
+//
+//  main.cpp
+//  Ch1AlarmThread
+//
+//  Created by matthew on 2013-12-25.
+//  Copyright (c) 2013 matthew. All rights reserved.
+//
+
+#include <pthread.h>
+#include "errors.h"
+
+typedef struct alarm_tag
+{
+    int seconds;
+    char message[64];
+} alarm_t;
+
+void *alarm_thread(void *arg)
+{
+    alarm_t *alarm = (alarm_t*)arg;
+    int status;
+    
+    status = pthread_detach(pthread_self());
+    if(status!=0)
+        err_abort(status, "Detach thread");
+    sleep(alarm->seconds);
+    printf("(%d) %s\n", alarm->seconds, alarm->message);
+    free(alarm);
+    return NULL;
+}
+
+
+int main(int argc, const char * argv[])
+{
+    int status;
+    char line[128];
+    alarm_t *alarm;
+    pthread_t thread;
+    
+    while (1)
+    {
+        printf("Alarm> ");
+        if (fgets(line, sizeof(line), stdin) == NULL) exit(0);
+        if (strlen(line) <= 1) continue;
+        
+        alarm = (alarm_t*)malloc(sizeof(alarm_t));
+        if (alarm == NULL)
+            errno_abort("Allocate alarm");
+        
+        if (sscanf(line, "%d %64[^\n]", &alarm->seconds, alarm->message) < 2)
+        {
+            fprintf(stderr, "Bad command\n");
+            free(alarm);
+        }
+        else
+        {
+            status = pthread_create(&thread, NULL, alarm_thread, alarm);
+            if (status!=0)
+                err_abort(status, "Create alarm thread");
+            
+//            status = pthread_detach(thread);
+//            if(status!=0)
+//                err_abort(status, "Detach thread");
+
+        }
+    }
+}
