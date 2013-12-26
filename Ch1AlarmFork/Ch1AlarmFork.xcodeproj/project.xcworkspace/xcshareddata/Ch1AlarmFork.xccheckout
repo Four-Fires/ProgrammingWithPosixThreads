@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>77FC641C-F9B1-4A6E-9FC8-1FBB0A8B4387</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Ch1AlarmFork</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>FBE9D812-854C-40B1-91D4-3B45D75FCFA4</key>
+		<string>https://github.com/Four-Fires/ProgrammingWithPosixThreads.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Ch1AlarmFork/Ch1AlarmFork.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>FBE9D812-854C-40B1-91D4-3B45D75FCFA4</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Four-Fires/ProgrammingWithPosixThreads.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>FBE9D812-854C-40B1-91D4-3B45D75FCFA4</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>FBE9D812-854C-40B1-91D4-3B45D75FCFA4</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ProgrammingWithPosixThreads</string>
+		</dict>
+	</array>
+</dict>
+</plist>
