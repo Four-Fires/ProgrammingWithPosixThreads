@@ -30,6 +30,7 @@ typedef struct alarm_tag {
 
 pthread_mutex_t alarm_mutex = PTHREAD_MUTEX_INITIALIZER;
 alarm_t *alarm_list = NULL;
+bool alarm_done;
 
 /*
  * The alarm thread's start routine.
@@ -59,6 +60,12 @@ void *alarm_thread (void *arg)
          * result is less than 0 (the time has passed), then set
          * the sleep_time to 0.
          */
+        if (alarm == NULL && alarm_done)
+        {
+            printf("alarm_done equals true\n");
+            pthread_exit(NULL);
+        }
+        
         if (alarm == NULL)
             sleep_time = 1;
         else {
@@ -108,6 +115,8 @@ int main (int argc, char *argv[])
     alarm_t *alarm, **last, *next;
     pthread_t thread;
     
+    alarm_done = false;
+    
     status = pthread_create (
                              &thread, NULL, alarm_thread, NULL);
     if (status != 0)
@@ -116,6 +125,15 @@ int main (int argc, char *argv[])
         printf ("alarm> ");
         if (fgets (line, sizeof (line), stdin) == NULL) exit (0);
         if (strlen (line) <= 1) continue;
+        
+        char cmdChar;
+        sscanf(line, "%c", &cmdChar);
+        if (cmdChar == 'q') {
+            printf("got quit command\n");
+            alarm_done = true;
+            pthread_exit(NULL);
+        }
+        
         alarm = (alarm_t*)malloc (sizeof (alarm_t));
         if (alarm == NULL)
             errno_abort ("Allocate alarm");
