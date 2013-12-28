@@ -28,6 +28,7 @@
 		345D6DB9186E3A93007E53BA /* Ch3AlarmMutex */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Ch3AlarmMutex; sourceTree = BUILT_PRODUCTS_DIR; };
 		345D6DBC186E3A93007E53BA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		345D6DBE186E3A93007E53BA /* Ch3AlarmMutex.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Ch3AlarmMutex.1; sourceTree = "<group>"; };
+		345D6DC5186E70E6007E53BA /* errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = errors.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +61,7 @@
 		345D6DBB186E3A93007E53BA /* Ch3AlarmMutex */ = {
 			isa = PBXGroup;
 			children = (
+				345D6DC5186E70E6007E53BA /* errors.h */,
 				345D6DBC186E3A93007E53BA /* main.cpp */,
 				345D6DBE186E3A93007E53BA /* Ch3AlarmMutex.1 */,
 			);
