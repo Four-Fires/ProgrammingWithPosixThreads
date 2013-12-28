@@ -6,108 +6,106 @@
 //  Copyright (c) 2013 matthew. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#define USING_MUTEX     0
+
 #include "errors.h"
 #include <pthread.h>
 
-//bool sharedBool;
-BOOL sharedBool;
-NSNumber *sharedNum;
-
-void *bool_reading_thread (void *arg)
-{
-    while (1) {
-//        bool curBool = sharedBool;
-        BOOL curBool = sharedBool;
-
-        if (curBool)
-            printf("curBool: true\n");
-        else
-            printf("curBool: false\n");
-    }
-}
-
-void *bool_writing_thread (void *arg)
-{
-    while (1) {
-        sharedBool = !sharedBool;
-        if (sharedBool)
-            printf("sharedBool: true\n");
-        else
-            printf("sharedBool: false\n");
-    }
-}
+long sharedNum;
+long total;
+pthread_mutex_t int_rw_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void *int_reading_thread (void *arg)
 {
-    while (1) {
-        NSLog(@"int is: %@", sharedNum);
+    for (long i=0; i<1000000; i++) {
+#if USING_MUTEX
+        pthread_mutex_lock(&int_rw_mutex);
+#endif
+        for (int j=0; j<10; j++)
+        {
+            long tmp = sharedNum;
+        }
+#if USING_MUTEX
+        pthread_mutex_unlock(&int_rw_mutex);
+#endif
     }
+    return NULL;
 }
 
 void *int_increase_thread (void *arg)
 {
-    while (1) {
-        sharedNum = [NSNumber numberWithInt:[sharedNum intValue]+1];
+    for (long i=0; i<1000000; i++) {
+#if USING_MUTEX
+        pthread_mutex_lock(&int_rw_mutex);
+#endif
+        sharedNum++;
+        total+=sharedNum;
+#if USING_MUTEX
+        pthread_mutex_unlock(&int_rw_mutex);
+#endif
     }
+    return NULL;
 }
 
 void *int_decrease_thread (void *arg)
 {
-    while (1) {
-        sharedNum = [NSNumber numberWithInt:[sharedNum intValue]-1];
+    for (long i=0; i<1000000; i++) {
+#if USING_MUTEX
+        pthread_mutex_lock(&int_rw_mutex);
+#endif
+        sharedNum--;
+        total+=sharedNum;
+#if USING_MUTEX
+        pthread_mutex_unlock(&int_rw_mutex);
+#endif
     }
+    return NULL;
 }
 
 int main(int argc, const char * argv[])
 {
     int status;
-    pthread_t thread1;
-    pthread_t thread2;
-    pthread_t thread3;
-    pthread_t thread4;
-    pthread_t thread5;
+    pthread_t thread_r;
+    pthread_t thread_inc;
+    pthread_t thread_dec;
     
-    sharedBool = false;
-    sharedNum = [NSNumber numberWithInt:0];
+    // test 1, write/write
+    sharedNum = 0;
+    total = 0;
+    status = pthread_create (
+                             &thread_inc, NULL, int_increase_thread, NULL);
+    if (status != 0)
+        err_abort (status, "Create thread_inc");
     
-//    status = pthread_create (
-//                             &thread1, NULL, bool_writing_thread, NULL);
-//    if (status != 0)
-//        err_abort (status, "Create thread1");
-//
-//    status = pthread_create (
-//                             &thread2, NULL, bool_writing_thread, NULL);
-//    if (status != 0)
-//        err_abort (status, "Create thread2");
-//    
-//    status = pthread_create (
-//                             &thread3, NULL, int_increase_thread, NULL);
-//    if (status != 0)
-//        err_abort (status, "Create thread3");
-//    
-//    status = pthread_create (
-//                             &thread4, NULL, int_decrease_thread, NULL);
-//    if (status != 0)
-//        err_abort (status, "Create thread4");
-//    
-//    status = pthread_create (
-//                             &thread5, NULL, int_reading_thread, NULL);
-//    if (status != 0)
-//        err_abort (status, "Create thread5");
-
-    for (int i=0; i<50000; i++) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            sharedNum = [NSNumber numberWithInt:[sharedNum intValue]+1];
-            NSLog(@"increase %d", i);
-        });
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            sharedNum = [NSNumber numberWithInt:[sharedNum intValue]-1];
-            NSLog(@"decrease %d", i);
-        });
-    }
+    status = pthread_create (
+                             &thread_dec, NULL, int_decrease_thread, NULL);
+    if (status != 0)
+        err_abort (status, "Create thread_dec");
     
-    pthread_exit(NULL);
+    pthread_join(thread_inc, NULL);
+    pthread_join(thread_dec, NULL);
+    
+    printf("inc,dec results:\n");
+    printf("sharedNum: %ld\n\n", sharedNum);
+    
+    // test 2, read/write
+    sharedNum = 0;
+    total = 0;
+    status = pthread_create (
+                             &thread_inc, NULL, int_increase_thread, NULL);
+    if (status != 0)
+        err_abort (status, "Create thread_inc");
+    
+    status = pthread_create (
+                             &thread_r, NULL, int_reading_thread, NULL);
+    if (status != 0)
+        err_abort (status, "Create thread_r");
+    
+    pthread_join(thread_inc, NULL);
+    pthread_join(thread_r, NULL);
+    
+    printf("read,inc results:\n");
+    printf("sharedNum: %ld\n", sharedNum);
+    printf("total: %ld\n", total);
 }
 
